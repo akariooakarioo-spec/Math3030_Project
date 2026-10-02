@@ -9,7 +9,7 @@
 
 % --- Project Metadata ---
 \title{MATH3030: Mathematical Research Project\\ \Large Elliptic Curve Cryptography: An Algebraic Analysis of Secret Key Exchanges}
-\author{Akari Oo \\ Student ID: XXXXXXXX}
+\author{Akari Oo \\ Student ID: 47510927}
 \date{October 2026}
 
 \begin{document}
@@ -24,7 +24,14 @@ This research project explores the algebraic structures underpinning Elliptic Cu
 
 \section{Introduction}
 % Week 8/9 Focus: Writing for a generalist audience.
-[Your generalist audience introduction text will go here.]
+In our modern world, keeping digital data safe is incredibly important for everyday life, like using online banking or sending encrypted text messages on our phones. To protect this private information from hackers, computers use a system called public-key cryptography. This is a special method that allows two people to share a secret password over the public internet, even if they have never met before and are sitting on opposite sides of the world. 
+
+For a long time, the most popular system for doing this was called RSA (Rivest--Shamir--Adleman). The math behind RSA is simple: it is very easy to multiply two massive prime numbers together, but it is nearly impossible for a computer to work backward and figure out what those original prime numbers were. However, because modern computers are getting faster every day, these numbers now have to be incredibly huge to stay safe from hackers. Managing these massive numbers slows down internet networks and drains the battery life of small mobile devices.
+
+Elliptic Curve Cryptography (ECC) fixes this problem by switching to a completely different type of math. Instead of using massive prime numbers, it uses the geometric properties of curves. By applying the laws of mathematical groups that we study in abstract algebra, we can use these curves to create codes that are just as secure as traditional systems but use much smaller numbers. For example, a tiny 256-bit elliptic curve key provides the exact same security as a massive 3072-bit RSA key. This reduction in size makes data processing highly efficient, accelerates connection speeds, and saves battery power on mobile devices.
+
+To explore how this math works, this report is broken down into three main sections. Section 2 will look at the mathematical foundations, showing how curves behave on a smooth graph and how they turn into a discrete grid of dots when we apply modular arithmetic. Section 3 will present my main project contribution: I will pick a simple curve equation, find its coordinates on a small number grid, and show a complete step-by-step example of two people sharing a secret key. Finally, Section 4 will discuss the security limits of these curves and look at how future quantum computers might impact them.
+
 
 \section{Mathematical Exposition \& Foundations}
 % Week 10 Focus: Rigorous abstract algebra.
