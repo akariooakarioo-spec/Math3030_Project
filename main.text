@@ -1,0 +1,48 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% --- Project Metadata ---
+\title{MATH3030: Mathematical Research Project\\ \Large Elliptic Curve Cryptography: An Algebraic Analysis of Secret Key Exchanges}
+\author{Akari Oo \\ Student ID: XXXXXXXX}
+\date{October 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This research project explores the algebraic structures underpinning Elliptic Curve Cryptography (ECC) and demonstrates its application in secure key distribution frameworks. 
+\end{abstract}
+
+\newpage
+
+\section{Introduction}
+% Week 8/9 Focus: Writing for a generalist audience.
+[Your generalist audience introduction text will go here.]
+
+\section{Mathematical Exposition \& Foundations}
+% Week 10 Focus: Rigorous abstract algebra.
+\subsection{Elliptic Curves over Real Fields}
+\subsection{Generalization over Finite Fields $\mathbb{F}_p$}
+\subsection{The Group Addition Law \& Chord-and-Tangent Method}
+
+\section{Algorithmic Simulation \& Key Exchange}
+% Week 11 Focus: Custom curve math calculations.
+\subsection{Parameter Selection \& Coordinate Mapping}
+\subsection{Elliptic Curve Diffie-Hellman (ECDH) Simulation}
+
+\section{Conclusion \& Future Work}
+% Week 12 Focus: Wrap up and Post-Quantum cryptography.
+
+\newpage
+\appendix
+\section{Project Management Reflection}
+% Week 12/13 Focus: Version control logs and timeline evaluation.
+
+\end{document}
