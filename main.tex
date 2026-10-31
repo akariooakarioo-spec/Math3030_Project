@@ -53,3 +53,56 @@ To explore how this math works, this report is broken down into three main secti
 % Week 12/13 Focus: Version control logs and timeline evaluation.
 
 \end{document}
+% =========================================================================
+% SECTION 2: MATHEMATICAL EXPOSITION & FOUNDATIONS
+% =========================================================================
+
+\subsection{Elliptic Curves over Real Fields}
+An elliptic curve $E$ over the field of continuous real numbers $\mathbb{R}$ is defined algebraically by a cubic Weierstrass equation of the form:
+\begin{equation}
+    y^2 = x^3 + ax + b
+    \label{eq:real_weierstrass}
+\end{equation}
+where the coefficients $a, b \in \mathbb{R}$ are fixed structural constants~\cite{hoffstein}. To ensure that the curve is smooth and well-behaved for cryptographic applications, we must prevent geometric anomalies such as cusps, self-intersections, or isolated nodes. This is achieved by enforcing a strict non-singularity condition, which dictates that the discriminant $\Delta$ of the cubic polynomial must be non-zero:
+\begin{equation}
+    \Delta = -16(4a^3 + 27b^2) \neq 0
+    \label{eq:discriminant}
+\end{equation}
+Geometrically, a non-zero discriminant guarantees that the polynomial $x^3 + ax + b$ possesses three distinct roots (which may be real or complex), ensuring that a unique tangent line can be calculated at every single coordinate along the continuous curve path~\cite{washington}.
+
+\subsection{Generalization over Finite Fields $\mathbb{F}_p$}
+While real-valued continuous geometric curves are useful for visualization and modeling, practical digital cryptosystems cannot operate over infinite, continuous decimal spaces due to floating-point rounding errors. To achieve absolute mathematical precision, we restrict the domain of our coordinates to a finite field $\mathbb{F}_p$, representing the set of integers modulo a prime number $p$~\cite{washington}. Under this paradigm, the elliptic curve equation transforms into a modular congruence structure:
+\begin{equation}
+    y^2 \equiv x^3 + ax + b \pmod{p}
+    \label{eq:modular_weierstrass}
+\end{equation}
+where the coefficients $a, b \in \mathbb{F}_p$ must satisfy the modified modular non-singularity check $4a^3 + 27b^2 \not\equiv 0 \pmod{p}$~\cite{hoffstein}. 
+
+Shifting the domain to $\mathbb{F}_p$ alters the geometry fundamentally. Instead of a smooth, continuous line, the curve manifests as a finite, discrete grid of coordinates $(x, y) \in \mathbb{F}_p \times \mathbb{F}_p$ satisfying Equation~\ref{eq:modular_weierstrass}. The complete collection of these discrete solutions, denoted by $E(\mathbb{F}_p)$, is finite and always includes an idealized point at infinity, denoted as $\mathcal{O}$, which functions as the structural boundary element of the system.
+
+\subsection{The Group Addition Law \& Chord-and-Tangent Method}
+The finite set of discrete coordinates $E(\mathbb{F}_p)$ forms a commutative algebraic structure known as an abelian group under a specialized binary operation called point addition, denoted by the symbol $\oplus$~\cite{hoffstein}. To satisfy the formal axioms of group theory, the operation adheres to the following structural laws:
+\begin{itemize}
+    \item \textbf{Identity:} The point at infinity $\mathcal{O}$ serves as the additive identity element. For any point $P \in E(\mathbb{F}_p)$, $P \oplus \mathcal{O} = \mathcal{O} \oplus P = P$.
+    \item \textbf{Inverse:} Every point $P = (x, y)$ possesses a unique additive inverse $-P = (x, -y \pmod{p})$, such that $P \oplus (-P) = \mathcal{O}$. Geometrically, the inverse is the reflection of the point across the central horizontal axis of symmetry.
+    \item \textbf{Associativity \& Commutativity:} For any points $P, Q, R \in E(\mathbb{F}_p)$, the operations satisfy $(P \oplus Q) \oplus R = P \oplus (Q \oplus R)$ and $P \oplus Q = Q \oplus P$~\cite{washington}.
+\end{itemize}
+
+Geometrically over $\mathbb{R}$, adding two distinct points $P$ and $Q$ relies on the chord method: drawing a straight line through $P$ and $Q$ yields a third intersection point on the curve, $R'$, which is then reflected across the $x$-axis to discover the final sum $P \oplus Q = R$. If a point is added to itself ($P \oplus P$), a tangent line is constructed at $P$ to find the intersection point prior to reflection.
+
+To evaluate these operations algebraically on our discrete modulo-$p$ space, let $P = (x_1, y_1)$ and $Q = (x_2, y_2)$ be elements of $E(\mathbb{F}_p)$. Assuming $P \neq -Q$, the coordinates of their group sum $R = P \oplus Q = (x_3, y_3)$ are computed using the following equations:
+\begin{equation}
+    x_3 \equiv \lambda^2 - x_1 - x_2 \pmod{p}
+    \label{eq:add_x}
+\end{equation}
+\begin{equation}
+    y_3 \equiv \lambda(x_1 - x_3) - y_1 \pmod{p}
+    \label{eq:add_y}
+\end{equation}
+
+The modular slope parameter $\lambda$ is determined dynamically based on whether the operation is point addition or point doubling:
+\begin{align}
+    \lambda &\equiv (y_2 - y_1)(x_2 - x_1)^{-1} \pmod{p} \quad \text{when } P \neq Q \label{eq:slope_add} \\
+    \lambda &\equiv (3x_1^2 + a)(2y_1)^{-1} \pmod{p} \quad \text{when } P = Q \label{eq:slope_double}
+\end{align}
+In Equations~\ref{eq:slope_add} and~\ref{eq:slope_double}, the exponent notation $(\cdot)^{-1}$ denotes the modular multiplicative inverse rather than a standard fractional denominator. If the modular inverse cannot be calculated because the denominator reduces to $0 \pmod{p}$, the geometric line is vertical, and the operation yields the identity point $\mathcal{O}$~\cite{hoffstein}.
