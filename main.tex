@@ -112,6 +112,94 @@ The modular slope parameter $\lambda$ is determined dynamically based on whether
 \end{align}
 In Equations~\ref{eq:slope_add} and~\ref{eq:slope_double}, the exponent notation $(\cdot)^{-1}$ denotes the modular multiplicative inverse rather than a standard fractional denominator. If the modular inverse cannot be calculated because the denominator reduces to $0 \pmod{p}$, the geometric line is vertical, and the operation yields the identity point $\mathcal{O}$~\cite{hoffstein}.
 
+\section{Algorithmic Simulation \& Key Exchange}
+\label{sec:simulation}
+
+\subsection{Parameter Selection \& Coordinate Mapping}
+\label{subsec:mapping}
+To construct a concrete computational simulation of an elliptic curve cryptosystem, we define specific system parameters over the prime field $\mathbb{F}_{11}$. We select the non-singular curve parameters $a = 1$ and $b = 6$, yielding the explicit cryptographic congruence equation:
+\begin{equation}
+    y^2 \equiv x^3 + x + 6 \pmod{11}
+    \label{eq:simulation_curve}
+\end{equation}
+The discriminant is calculated as $\Delta = -16(4(1)^3 + 27(6)^2) = -16(976) = -15616$. Reducing this modulo $11$ yields $-15616 \equiv 4 \pmod{11}$. Because $\Delta \not\equiv 0 \pmod{11}$, the curve is guaranteed to be non-singular and contains no geometric anomalies.
+
+By exhaustively calculating the right-hand side of Equation~\ref{eq:simulation_curve} for all elements $x \in \mathbb{F}_{11}$ and intersecting the results with the set of quadratic residues $\mathcal{Q}_{11} = \{0, 1, 3, 4, 5, 9\}$, we map out the complete finite coordinate grid. Including the idealized additive identity element at infinity $\mathcal{O}$, the group $E(\mathbb{F}_{11})$ consists of exactly $N = 13$ discrete points. The complete set is explicitly detailed in Table~\ref{tab:coordinate_solutions}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Explicit Coordinate Grid Mapping for $y^2 \equiv x^3 + x + 6 \pmod{11}$}
+    \label{tab:coordinate_solutions}
+    \begin{tabular}{cccc}
+        \toprule
+        $x \in \mathbb{F}_{11}$ & $x^3 + x + 6 \pmod{11}$ & Quadratic Residue Check ($y^2$) & Discrete Points $(x,y)$ \\
+        \midrule
+        0  & 6  & Not a Quadratic Residue   & None \\
+        1  & 8  & Not a Quadratic Residue   & None \\
+        2  & 5  & $4^2 \equiv 7^2 \equiv 5$ & $(2,4), (2,7)$ \\
+        3  & 3  & $5^2 \equiv 6^2 \equiv 3$ & $(3,5), (3,6)$ \\
+        4  & 8  & Not a Quadratic Residue   & None \\
+        5  & 4  & $2^2 \equiv 9^2 \equiv 4$ & $(5,2), (5,9)$ \\
+        6  & 8  & Not a Quadratic Residue   & None \\
+        7  & 4  & $2^2 \equiv 9^2 \equiv 4$ & $(7,2), (7,9)$ \\
+        8  & 9  & $3^2 \equiv 8^2 \equiv 9$ & $(8,3), (8,8)$ \\
+        9  & 7  & Not a Quadratic Residue   & None \\
+        10 & 4  & $2^2 \equiv 9^2 \equiv 4$ & $(10,2), (10,9)$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Elliptic Curve Diffie-Hellman (ECDH) Simulation}
+\label{subsec:ecdh_sim}
+Using the coordinate infrastructure established in Table~\ref{tab:coordinate_solutions}, we simulate an Elliptic Curve Diffie-Hellman (ECDH) key exchange sequence. This serves to demonstrate how two parties, Alice and Bob, can safely establish a matching encryption key over an insecure public channel.
+
+The parties agree on a publicly known base generator point $G \in E(\mathbb{F}_{11})$. We select:
+\begin{equation}
+    G = (2, 7)
+\end{equation}
+
+\subsubsection{Step 1: Alice's Public Key Generation}
+Alice selects a secret private integer $n_A = 2$. To compute her public key $P_A = 2G = G \oplus G$, she applies the point-doubling slope formula from Equation~\ref{eq:slope_double} with $x_1 = 2, y_1 = 7$:
+\begin{equation}
+    \lambda \equiv \frac{3(2)^2 + 1}{2(7)} \equiv \frac{13}{14} \equiv \frac{2}{3} \equiv 2 \cdot 3^{-1} \pmod{11}
+\end{equation}
+Because $3 \cdot 4 = 12 \equiv 1 \pmod{11}$, the modular multiplicative inverse is $3^{-1} \equiv 4 \pmod{11}$. This yields:
+\begin{equation}
+    \lambda \equiv 2 \cdot 4 = 8 \pmod{11}
+\end{equation}
+Using Equations~\ref{eq:add_x} and~\ref{eq:add_y}, Alice isolates the new coordinates $(x_3, y_3)$:
+\begin{align}
+    x_3 &\equiv 8^2 - 2 - 2 = 60 \equiv 5 \pmod{11} \\
+    y_3 &\equiv 8(2 - 5) - 7 = -31 \equiv 2 \pmod{11}
+\end{align}
+Thus, Alice's transmitted public key point is $P_A = (5, 2)$.
+
+\subsubsection{Step 2: Bob's Public Key Generation}
+Bob selects his own secret private integer $n_B = 3$. He computes his public key $P_B = 3G = 2G \oplus G = (5,2) \oplus (2,7)$. Since the points are distinct, he uses the secant slope formula from Equation~\ref{eq:slope_add}:
+\begin{equation}
+    \lambda \equiv \frac{7 - 2}{2 - 5} \equiv \frac{5}{-3} \equiv 5 \cdot 8^{-1} \pmod{11}
+\end{equation}
+Since $8 \cdot 7 = 56 \equiv 1 \pmod{11}$, we substitute $8^{-1} \equiv 7$, arriving at $\lambda \equiv 5 \cdot 7 = 35 \equiv 2 \pmod{11}$. Bob calculates his coordinates:
+\begin{align}
+    x_3 &\equiv 2^2 - 5 - 2 = -3 \equiv 8 \pmod{11} \\
+    y_3 &\equiv 2(5 - 8) - 2 = -8 \equiv 3 \pmod{11}
+\end{align}
+Thus, Bob's transmitted public key point is $P_B = (8, 3)$.
+
+\subsubsection{Step 3: Shared Secret Computation}
+Alice and Bob transmit their public points $P_A$ and $P_B$ over the public network. Each party multiplies the received point by their own held private key:
+\begin{itemize}
+    \item \textbf{Alice computes:} $K = n_A \cdot P_B = 2 \cdot (8, 3)$. Applying the point-doubling formula ($\lambda \equiv \frac{3(8)^2+1}{2(3)} \equiv \frac{193}{6} \equiv 6 \cdot 2 \equiv 1 \pmod{11}$), she computes:
+    \begin{align}
+        x_K &\equiv 1^2 - 8 - 8 = -15 \equiv 7 \pmod{11} \\
+        y_K &\equiv 1(8 - 7) - 3 = -2 \equiv 9 \pmod{11}
+    \end{align}
+    \item \textbf{Bob computes:} $K = n_B \cdot P_A = 3 \cdot (5, 2) = (5,2) \oplus (5,2) \oplus (5,2)$. Following sequential point additions via the group associative laws, Bob computes exactly $6G$, which reduces precisely to the coordinate:
+    \begin{equation}
+        K = (7, 9)
+    \end{equation}
+\end{itemize}
+As shown, both parties calculate the identical tracking point $K = (7, 9)$ without ever exposing their individual private multipliers ($n_A=2, n_B=3$). This shared coordinate can now safely serve as the baseline seed for symmetric data encryption.
 
 
 % =========================================================================
