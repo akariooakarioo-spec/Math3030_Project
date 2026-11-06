@@ -38,27 +38,6 @@ Elliptic Curve Cryptography (ECC) fixes this problem by switching to a completel
 To explore how this math works, this report is broken down into three main sections. Section 2 will look at the mathematical foundations, showing how curves behave on a smooth graph and how they turn into a discrete grid of dots when we apply modular arithmetic. Section 3 will present my main project contribution: I will pick a simple curve equation, find its coordinates on a small number grid, and show a complete step-by-step example of two people sharing a secret key. Finally, Section 4 will discuss the security limits of these curves and look at how future quantum computers might impact them.
 
 
-\section{Mathematical Exposition \& Foundations}
-% Week 10 Focus: Rigorous abstract algebra.
-\subsection{Elliptic Curves over Real Fields}
-\subsection{Generalization over Finite Fields $\mathbb{F}_p$}
-\subsection{The Group Addition Law \& Chord-and-Tangent Method}
-
-\section{Algorithmic Simulation \& Key Exchange}
-% Week 11 Focus: Custom curve math calculations.
-\subsection{Parameter Selection \& Coordinate Mapping}
-\subsection{Elliptic Curve Diffie-Hellman (ECDH) Simulation}
-
-\section{Conclusion \& Future Work}
-% Week 12 Focus: Wrap up and Post-Quantum cryptography.
-
-\newpage
-\appendix
-\section{Project Management Reflection}
-% Week 12/13 Focus: Version control logs and timeline evaluation.
-
-\end{document}
-% =========================================================================
 % SECTION 2: MATHEMATICAL EXPOSITION & FOUNDATIONS
 % =========================================================================
 
@@ -201,21 +180,33 @@ Alice and Bob transmit their public points $P_A$ and $P_B$ over the public netwo
 \end{itemize}
 As shown, both parties calculate the identical tracking point $K = (7, 9)$ without ever exposing their individual private multipliers ($n_A=2, n_B=3$). This shared coordinate can now safely serve as the baseline seed for symmetric data encryption.
 
+\section{Conclusion \& Future Work}
+\label{sec:conclusion}
 
-% =========================================================================
-% REFERENCES / BIBLIOGRAPHY
-% =========================================================================
-\newpage
+This project successfully demonstrates how the geometric properties of elliptic curves over a simple number grid ($\mathbb{F}_{11}$) can be used to share secret keys safely over the internet. By tracking the coordinate points listed in Table~1, we can see how a smooth, continuous math curve turns into a discrete grid of dots. In our simulation, Alice and Bob successfully used this grid to calculate the exact same secret matching point, $K = (7, 9)$, without ever exposing their private numbers ($nA = 2$ and $nB = 3$) to the public network. This process highlights the core strength of modern public-key cryptography, which relies on a mathematical "one-way street": it is incredibly fast and simple for a computer to move forward to create a public key, but practically impossible for an eavesdropper to work backward and steal the private key \cite{hoffstein}.
+
+The security of almost all online data relies on this mathematical asymmetry \cite{washington}. For a conventional hacker using standard computers, breaking this code requires guessing every single combination by brute force. When using large cryptographic numbers, this guessing game would take thousands of years, making the system completely secure for everyday use.
+
+However, our digital security is about to face its most significant challenge yet. The development of quantum computers threatens to completely break this mathematical safety net. Using a famous quantum method called Shor's Algorithm, a quantum computer can exploit quantum physics shortcuts to solve our curve puzzles almost instantly \cite{shor1994}. Even though elliptic curves are newer and more advanced than older systems like RSA, they are actually easier for a quantum computer to break. This is because elliptic curves use much smaller keys, meaning a quantum computer needs less processing power to crack them.
+
+Because of this looming threat, the next phase of this project will shift focus toward the future of data security: Post-Quantum Cryptography (PQC). Instead of relying on regular elliptic curves, tomorrow's security systems will transition to complex, multidimensional geometric shapes called lattices \cite{nist2024}. These structures create massive, high-dimensional mathematical mazes that confuse both normal computers and quantum computers alike. By studying these new geometric frameworks, we can help design digital defenses that will keep our global networks safe from future quantum threats.
+
 \begin{thebibliography}{99}
 
 \bibitem{hoffstein}
-J.~Hoffstein, J.~Pipher, and J.~H.~Silverman, 
-\textit{An Introduction to Mathematical Cryptography}, 2nd ed. 
+J.~Hoffstein, J.~Pipher, and J.~H.~Silverman,
+\textit{An Introduction to Mathematical Cryptography}, 2nd ed.
 New York, NY: Springer, 2014.
 
 \bibitem{washington}
-L.~C.~Washington, 
-\textit{Elliptic Curves: Number Theory and Cryptography}, 2nd ed. 
+L.~C.~Washington,
+\textit{Elliptic Curves: Number Theory and Cryptography}, 2nd ed.
 Boca Raton, FL: Chapman \& Hall/CRC, 2008.
+
+\bibitem{shor1994}
+P.~W. Shor, ``Algorithms for quantum computation: discrete logarithms and factoring,'' in \emph{Proceedings 35th Annual Symposium on Foundations of Computer Science}, 1994, pp. 124--134.
+
+\bibitem{nist2024}
+National Institute of Standards and Technology, ``Module-Lattice-Based Key-Encapsulation Mechanism Standard (FIPS PUB 203),'' U.S. Department of Commerce, Tech. Rep., August 2024.
 
 \end{thebibliography}
